@@ -58,3 +58,7 @@ scripts	body	Contains all <script> tags at the end of the body.
 
 ref # https://pythonhosted.org/Flask-Bootstrap/basic-usage.html#available-blocks
 
+
+***** IMP ******
+the super() function when called inside a block then it overrides the inherited 
+content with the html pages own content
