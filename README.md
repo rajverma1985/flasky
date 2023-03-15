@@ -9,6 +9,13 @@ request, session
 
 # Checking app context
 
+>>> app_ctx=app.app_context()
+>>> app_ctx.push()
+>>> current_app.name
+'hello'
+>>> app_ctx.pop()
+>>> current_app.name
+
 
 # Checking URL map
 
