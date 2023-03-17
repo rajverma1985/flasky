@@ -27,3 +27,5 @@ Map([<Rule '/static/<filename>' (OPTIONS, GET, HEAD) -> static>,
 
 
 <Rule '/static/<filename>' (OPTIONS, GET, HEAD) -> static> >>>>> This is a special route added by Flask to access static files.
+
+OPTIONS, GET, HEAD   >>>>> These are the request methods
