@@ -1,4 +1,4 @@
-from flask import Flask, make_response
+from flask import Flask, make_response, abort
 
 app = Flask(__name__)
 
@@ -10,9 +10,12 @@ def hello():
     return response
 
 
-@app.route('/username/<user>')
-def user(user):
-    return f'<h1>Hello {user}</h1>'
+@app.route('/username/<id>')
+def user(id):
+    user = load_user(id)
+    if not user:
+        abort(404)
+    return '<h1>Hello {}, your id is {}</h1>'.format(user.name, user.id)
 
 
 if __name__ == "__main__":
