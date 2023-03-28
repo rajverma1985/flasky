@@ -13,5 +13,10 @@
     {%else%}
     <h2>Hello Stranger</h2>
     {%endif%}
+    <ul>
+        {%for n in names %}
+        <li>{{n}}</li>
+        {%endfor%}
+    </ul>
 </body>
 </html>

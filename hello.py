@@ -7,7 +7,8 @@ app = Flask(__name__)
 def hello():
     response = make_response('<h1>This is a cookie inside a document</h1>')
     response.set_cookie('testcookie', '40')
-    return render_template('index.html')
+    name = ['raj', 'test', 'test2', 'test3']
+    return render_template('index.html', names=name)
 
 
 @app.route('/username/<name>')
