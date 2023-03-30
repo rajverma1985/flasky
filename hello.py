@@ -1,6 +1,8 @@
 from flask import Flask, make_response, abort, render_template
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
+bootstrap =Bootstrap(app)
 
 
 @app.route('/')
@@ -17,6 +19,8 @@ def user(name):
         abort(404)
     return render_template('index.html', name=name)
 
-
+@app.route('/test')
+def test():
+    return render_template('user.html')
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
