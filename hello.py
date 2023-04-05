@@ -1,8 +1,10 @@
 from flask import Flask, make_response, abort, render_template, request
 from flask_bootstrap import Bootstrap
+from flask_moment import moment
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+moment = moment(app)
 
 
 @app.route('/')
