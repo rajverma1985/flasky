@@ -10,3 +10,8 @@
 {% block content %}
   <h1>Hello, Bootstrap</h1>
 {% endblock %}
+
+{% block scripts %}
+  {{super()}}
+  {{moment.include_moment()}}
+{% endblock %}
