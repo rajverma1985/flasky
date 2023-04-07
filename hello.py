@@ -1,18 +1,17 @@
-from flask import Flask, make_response, abort, render_template, request
+from flask import Flask, make_response, abort, render_template
 from flask_bootstrap import Bootstrap
-from flask_moment import moment
-
+from flask_moment import Moment
+from datetime import datetime
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-moment = moment(app)
+moment = Moment(app)
 
 
 @app.route('/')
 def hello():
     response = make_response('<h1>This is a cookie inside a document</h1>')
     response.set_cookie('testcookie', '40')
-    name = ['raj', 'test', 'test2', 'test3']
-    return render_template('index.html', names=name)
+    return render_template('index.html', current_time = datetime.utcnow())
 
 
 @app.route('/username/<name>')
