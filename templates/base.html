@@ -2,6 +2,7 @@
 {% block scripts %}
   {{ super() }}
   {{ moment.include_moment() }}
+  {{moment.locale('de')}}
 {% endblock %}
 
 {% block title %}This is an example page{% endblock %}
