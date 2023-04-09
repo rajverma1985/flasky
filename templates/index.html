@@ -10,8 +10,8 @@
     {%else%}
     <h2>Hello Stranger</h2>
     {%endif%}
-    <ul>The time right now is {{time}}</ul>
-    <ul>The local time is {{moment(time)}}</ul>
+    <ul>UTC time right now is {{current_time}}</ul>
+    <ul>The local time is {{moment(current_time).format('LLL')}}</ul>
 
 </div>
 {% endblock %}
