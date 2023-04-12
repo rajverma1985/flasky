@@ -67,3 +67,5 @@ content with the html pages own content
 # Custom Error pages
 Customize error pages with @app.errorhandler(404) etc.
 
+
+# Web forms
