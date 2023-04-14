@@ -5,7 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-
+app.config["SECRET_KEY"] = "some_random_key_here"
 
 @app.route('/')
 def hello():
