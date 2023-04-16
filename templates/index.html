@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
 
 {% block content %}
 <div class="page-header">
@@ -13,6 +15,6 @@
     <ul>UTC time right now is {{current_time}}</ul>
     <ul>The local time is {{moment(current_time).format('LLL')}}</ul>
     <ul>The local time is {{moment(current_time).fromNow(refresh=True)}}</ul>
-
+    {{ wtf.quick_form(form)}}
 </div>
 {% endblock %}

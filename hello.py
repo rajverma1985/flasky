@@ -19,11 +19,14 @@ class NewForm(FlaskForm):
     submit = SubmitField('Submit Form')
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello():
     response = make_response('<h1>This is a cookie inside a document</h1>')
     response.set_cookie('testcookie', '40')
-    return render_template('index.html', current_time=datetime.utcnow())
+    form = NewForm()
+    if form.validate_on_submit():
+        name = form.name.data
+    return render_template('index.html', current_time=datetime.utcnow(), form=form, name=name)
 
 
 @app.route('/username/<name>')
