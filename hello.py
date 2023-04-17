@@ -1,4 +1,4 @@
-from flask import Flask, make_response, abort, render_template
+from flask import Flask, make_response, abort, render_template, redirect, url_for, session
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
@@ -25,8 +25,10 @@ def hello():
     response.set_cookie('testcookie', '40')
     form = NewForm()
     if form.validate_on_submit():
-        name = form.name.data
-    return render_template('index.html', current_time=datetime.utcnow(), form=form, name=name)
+        session['name'] = form.name.data
+        form.name.data = ''
+        return redirect(url_for('hello'))
+    return render_template('index.html', current_time=datetime.utcnow(), form=form, name=session.get('name'))
 
 
 @app.route('/username/<name>')
