@@ -1,4 +1,4 @@
-from flask import Flask, make_response, abort, render_template
+from flask import Flask, make_response, abort, render_template, request
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -22,6 +22,7 @@ def user(name):
 
 @app.route('/test')
 def test():
+    abort(500)
     return render_template('user.html')
 
 
@@ -34,7 +35,7 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('404.html'), 400
+    return render_template('500.html'), 500
 
 
 if __name__ == "__main__":
