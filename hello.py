@@ -2,16 +2,31 @@ from flask import Flask, make_response, abort, render_template
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
+
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+app.config["SECRET_KEY"] = "some_random_key_here"
 
 
-@app.route('/')
+# Creating a form object from Flaskform class
+
+class NewForm(FlaskForm):
+    name = StringField('What is your Name', validators=[DataRequired()])
+    submit = SubmitField('Submit Form')
+
+
+@app.route('/', methods=['GET', 'POST'])
 def hello():
     response = make_response('<h1>This is a cookie inside a document</h1>')
     response.set_cookie('testcookie', '40')
-    return render_template('index.html', current_time = datetime.utcnow())
+    form = NewForm()
+    if form.validate_on_submit():
+        name = form.name.data
+    return render_template('index.html', current_time=datetime.utcnow(), form=form, name=name)
 
 
 @app.route('/username/<name>')
