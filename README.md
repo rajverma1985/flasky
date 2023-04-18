@@ -37,3 +37,28 @@ before_request
 before_first_request
 after_request
 teardown_request
+
+
+# IMPORTANT bootstrap template blocks
+
+Available blocks
+Block name	Outer Block	Purpose
+doc	 	Outermost block.
+html	doc	Contains the complete content of the <html> tag.
+html_attribs	doc	Attributes for the HTML tag.
+head	doc	Contains the complete content of the <head> tag.
+body	doc	Contains the complete content of the <body> tag.
+body_attribs	body	Attributes for the Body Tag.
+title	head	Contains the complete content of the <title> tag.
+styles	head	Contains all CSS style <link> tags inside head.
+metas	head	Contains all <meta> tags inside head.
+navbar	body	An empty block directly above content.
+content	body	Convenience block inside the body. Put stuff here.
+scripts	body	Contains all <script> tags at the end of the body.
+
+ref # https://pythonhosted.org/Flask-Bootstrap/basic-usage.html#available-blocks
+
+
+***** IMP ******
+the super() function when called inside a block then it overrides the inherited 
+content with the html pages own content
