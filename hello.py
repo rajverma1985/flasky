@@ -21,12 +21,13 @@ class NewForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def hello():
-    response = make_response('<h1>This is a cookie inside a document</h1>')
-    response.set_cookie('testcookie', '40')
     form = NewForm()
     if form.validate_on_submit():
         session['name'] = form.name.data
+        # this helps set the name field in form to be reset to none when POST request completes.
         form.name.data = ''
+        # if you do not have redirect then the POST request saves the data and when page
+        # refreshes it gives you an error of blank form submission.
         return redirect(url_for('hello'))
     return render_template('index.html', current_time=datetime.utcnow(), form=form, name=session.get('name'))
 
