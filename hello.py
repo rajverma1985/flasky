@@ -5,12 +5,39 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 app.config["SECRET_KEY"] = "some_random_key_here"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://raj:test@localhost/flasky"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+db = SQLAlchemy(app)
+
+
+# model definition
+
+class Role(db.Model):
+    __tablename__ = "roles"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    # user refers to the instance of the class Role
+    users = db.relationship('User', backref='role')
+
+    def __repr__(self):
+        return "<Role %r>" % self.name
+
+
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.relationship(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return "<User %r>" % self.username
 
 # Creating a form object from Flaskform class
 
@@ -58,3 +85,4 @@ def internal_server_error(e):
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
+
