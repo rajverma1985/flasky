@@ -44,12 +44,6 @@ def user(name):
     return render_template('index.html', name=name)
 
 
-@app.route('/test')
-def test():
-    abort(500)
-    return render_template('user.html')
-
-
 # custom error pages
 
 @app.errorhandler(404)
