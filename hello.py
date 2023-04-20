@@ -34,10 +34,12 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
-    role_id = db.relationship(db.Integer, db.ForeignKey('roles.id'))
+    # this is the foreign key colum for users table which refers to roles tables id column
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
     def __repr__(self):
         return "<User %r>" % self.username
+
 
 # Creating a form object from Flaskform class
 
@@ -83,6 +85,15 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
+# creating some roles and users
+
+# admin = Role(name="Admin")
+# Moderator = Role(name="Moderator")
+# normal_user = Role(name="Normal_user")
+# user1 = User(username='user1', role=admin)
+# user2 = User(username='user2', role=Moderator)
+# user3 = User(username='user3', role=normal_user)
+# user4 = User(username='user4', role=normal_user)
+
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
-
