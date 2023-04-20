@@ -3,6 +3,7 @@
 
 
 {% block content %}
+{{super()}}
 <div class="page-header">
   {% if name %}
         <h2> Hello {{ name|capitalize }}</h2>
