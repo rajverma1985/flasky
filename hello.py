@@ -7,7 +7,8 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from
+from flask_mail import Mail, Message
+import os
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -15,9 +16,16 @@ moment = Moment(app)
 app.config["SECRET_KEY"] = "some_random_key_here"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://raj:test@localhost/flasky"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
+app.config["MAIL_PORT"] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USER")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASS")
 
+mail = Mail(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 # model definition
 
