@@ -24,7 +24,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     # user refers to the instance of the class Role
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
     def __repr__(self):
         return "<Role %r>" % self.name
@@ -52,18 +52,25 @@ class NewForm(FlaskForm):
 def index():
     form = NewForm()
     if form.validate_on_submit():
-        saved_name = session.get('name')
-        if saved_name is not None and saved_name != form.name.data:
-            flash("You seem to have changed your name")
-        session['name'] = form.name.data
-        # this helps set the name field in form to be reset to none when POST request completes.
-        # form.name.data = ''
-        # if you do not have redirect then the POST request saves the data and when page
-        # refreshes it gives you an error of blank form submission.
+        user = User.query.filter_by(username=form.name.data.first())
+        # saved_name = session.get('name')
+        # if saved_name is not None and saved_name != form.name.data:
+        #     flash("You seem to have changed your name")
+        if user is None:
+            session['known'] = False
+            db.session.add(user)
+            db.session.commit()
+        else:
+            session['known'] = True
+            user = form.name.data
+            # this helps set the name field in form to be reset to none when POST request completes.
+            form.name.data = ''
+        # if you do not have redirect then the POST request saves the data and when page, refreshes it gives you an error of blank form submission.
         return redirect(url_for('index'))
+    print(session.keys(), session.values())
     return render_template('index.html',
                            current_time=datetime.utcnow(), form=form,
-                           name=session.get('name'))
+                           name=session.get('name'), known=session.get('known', False))
 
 
 @app.route('/username/<name>')
