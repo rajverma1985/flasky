@@ -14,9 +14,22 @@
 {% endblock %}
 
 {% block content %}
-{% for message in get_flashed_messages()%}
-<div>
-  {{message}}
+<div class="page-header">
+  <h1>Hello,
+    {% if name %}
+    {{ name|capitalize }}
+    {% else %}
+    Stranger
+    {% endif %}!
+  </h1>
+  {%if known %}
+    <p>Nice to see you again!</p>
+  {% else %}
+    <p>Please to meet you!</p>
+  {%endif%}
+    <ul>UTC time right now is {{current_time.strftime('%B %d %Y - %H:%M:%S')}}</ul>
+    <ul>The local time is {{moment(current_time).format('LLL')}}</ul>
+    <ul>The local time is {{moment(current_time).fromNow(refresh=True)}}</ul>
 </div>
-{%endfor%}
+    {{ wtf.quick_form(form)}}
 {% endblock %}

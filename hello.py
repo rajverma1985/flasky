@@ -24,7 +24,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     # user refers to the instance of the class Role
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
     def __repr__(self):
         return "<Role %r>" % self.name
@@ -52,18 +52,23 @@ class NewForm(FlaskForm):
 def index():
     form = NewForm()
     if form.validate_on_submit():
-        saved_name = session.get('name')
-        if saved_name is not None and saved_name != form.name.data:
-            flash("You seem to have changed your name")
-        session['name'] = form.name.data
+        user = User.query.filter_by(username=form.name.data.capitalize()).first()
+        if user is None:
+            user = User(username=form.name.data.capitalize())
+            db.session.add(user)
+            db.session.commit()
+            session['known'] = False
+        else:
+            session['known'] = True
         # this helps set the name field in form to be reset to none when POST request completes.
-        # form.name.data = ''
-        # if you do not have redirect then the POST request saves the data and when page
-        # refreshes it gives you an error of blank form submission.
+        session['name'] = form.name.data
+        form.name.data = ''
+        # if you do not have redirect then the POST request saves the data and when page, refreshes it gives you an
+        # error of blank form submission.
         return redirect(url_for('index'))
     return render_template('index.html',
                            current_time=datetime.utcnow(), form=form,
-                           name=session.get('name'))
+                           name=session.get('name'), known=session.get('known', False))
 
 
 @app.route('/username/<name>')
@@ -83,17 +88,6 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
-
-
-# creating some roles and users
-
-# admin = Role(name="Admin")
-# Moderator = Role(name="Moderator")
-# normal_user = Role(name="Normal_user")
-# user1 = User(username='user1', role=admin)
-# user2 = User(username='user2', role=Moderator)
-# user3 = User(username='user3', role=normal_user)
-# user4 = User(username='user4', role=normal_user)
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
