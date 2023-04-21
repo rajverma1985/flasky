@@ -52,14 +52,15 @@ class NewForm(FlaskForm):
 def index():
     form = NewForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data.first())
+        user = User.query.filter_by(username=form.name.data).first()
         # saved_name = session.get('name')
         # if saved_name is not None and saved_name != form.name.data:
         #     flash("You seem to have changed your name")
         if user is None:
-            session['known'] = False
+            user = User(username=form.name.data)
             db.session.add(user)
             db.session.commit()
+            session['known'] = False
         else:
             session['known'] = True
             user = form.name.data
