@@ -1,4 +1,4 @@
-from flask import Flask, abort, render_template, redirect, url_for, session, flash
+from flask import Flask, abort, render_template, redirect, url_for, session
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
@@ -6,6 +6,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_mail import Mail, Message
+import os
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -13,8 +16,15 @@ moment = Moment(app)
 app.config["SECRET_KEY"] = "some_random_key_here"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://raj:test@localhost/flasky"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
+app.config["MAIL_PORT"] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USER")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASS")
 
+mail = Mail(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 # model definition
@@ -88,6 +98,7 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
