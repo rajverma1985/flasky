@@ -1,9 +1,10 @@
-from flask import Flask, abort, render_template, redirect, url_for, session
+from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_mail import Mail, Message
+from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
 from config import config
+
 
 bootstrap = Bootstrap()
 moment = Moment()
@@ -21,6 +22,8 @@ def create_app(config_name):
     mail.init_app(app)
     db.init_app(app)
 
+    from .main import main_bp
+    app.register_blueprint(main_bp)
     # placeholder for custom app error codes
 
     return app
