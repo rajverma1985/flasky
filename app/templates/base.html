@@ -9,7 +9,21 @@
 
 {% block navbar %}
 <div class="navbar navbar-fixed-top">
-  <!-- ... -->
+  <ul class="nav navbar-nav navbar-right">
+    {% if current_user.is_authenticated %}
+    <li>
+        <a href="{{url_for('auth.logout')}}">
+            LogOut
+        </a>
+    </li>
+    {% else %}
+    <li>
+        <a href="{{url_for('auth.login')}}">
+            LogIn
+        </a>
+    </li>
+    {% endif %}
+</ul>
 </div>
 {% endblock %}
 
@@ -27,9 +41,9 @@
   {% else %}
     <p>Please to meet you!</p>
   {%endif%}
-    <ul>UTC time right now is {{current_time.strftime('%B %d %Y - %H:%M:%S')}}</ul>
-    <ul>The local time is {{moment(current_time).format('LLL')}}</ul>
-    <ul>The local time is {{moment(current_time).fromNow(refresh=True)}}</ul>
+<!--    <ul>UTC time right now is {{current_time.strftime('%B %d %Y - %H:%M:%S')}}</ul>-->
+<!--    <ul>The local time is {{moment(current_time).format('LLL')}}</ul>-->
+<!--    <ul>The local time is {{moment(current_time).fromNow(refresh=True)}}</ul>-->
 </div>
     {{ wtf.quick_form(form)}}
 {% endblock %}
