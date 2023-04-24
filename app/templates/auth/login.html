@@ -9,5 +9,11 @@
 </div>
 <div class="col-md-4">
     {{ wtf.quick_form(loginform) }}
+    <p>New user?
+<a href="{{url_for('auth.register')}}">
+    Click here to Register
+</a>
+</p>
 </div>
+
 {% endblock %}
