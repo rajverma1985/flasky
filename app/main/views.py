@@ -1,12 +1,12 @@
 from datetime import datetime
 from flask import render_template, session, redirect, url_for
-from . import main_bp
+from . import main
 from .forms import NewForm
 from .. import db
 from ..models import User
 
 
-@main_bp.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
     form = NewForm()
     if form.validate_on_submit():
