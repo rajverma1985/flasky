@@ -3,8 +3,6 @@ from flask_login import login_user, login_required, logout_user
 from . import auth
 from ..models import User, db
 from .forms import LoginForm, RegisterForm
-from itsdangerous import URLSafeTimedSerializer as Serializer
-
 
 
 @auth.route('/login', methods=['GET', 'POST'])
