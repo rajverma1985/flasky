@@ -1,0 +1,11 @@
+Dear {{user.username,}},
+
+Welcome to xyz blog,
+
+Please confirm your account by clicking on the below link:
+
+{{url_for('auth.confim', token=token, _external=True)}}
+
+Best Regards,
+
+Team Flask

@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash, current_user
 from flask_login import login_user, login_required, logout_user
 from . import auth
 from ..models import User, db
@@ -40,3 +40,15 @@ def register():
         flash("Successfully Registered, you can login now!")
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', register_form=reg_form)
+
+
+@auth.confirm('/confirm/<token>')
+def confirm(token):
+    if current_user.confirmed:
+        return redirect(url_for('main.index'))
+    if current_user.confirm(token):
+        db.session.commit()
+        flash("Thanks for confirming you email")
+    else:
+        flash("The confirmation link has expired or invalid.")
+    return redirect(url_for('main.index'))
