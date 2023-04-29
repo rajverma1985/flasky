@@ -1,7 +1,9 @@
 from . import db
 from . import login_manager
+from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 
 @login_manager.user_loader
@@ -30,6 +32,23 @@ class User(UserMixin, db.Model):
     # this is the foreign key colum for users table which refers to roles tables id column
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    confirmed = db.Column(db.Boolean, default=False)
+
+    def generate_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({"confirm": self.id}, salt="2sdaiu23", )
+
+    def confirm_token(self, token, expiration=3600):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = token.loads(s, salt="2sdaiu23", max_age=expiration)
+        except:
+            return False
+        if data.get("confirm") != self.id:
+            return False
+        else:
+            self.confirmed = True
+        return True
 
     @property
     def password(self):
@@ -37,7 +56,7 @@ class User(UserMixin, db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password=password, salt_length=10, method='pbkdf2:sha256')
 
     def verify_password(self, password):
         return check_password_hash(pwhash=self.password_hash, password=password)

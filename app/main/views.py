@@ -12,7 +12,7 @@ def index():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.name.data.capitalize()).first()
         if user is None:
-            user = User(username=form.name.data.capitalize())
+            user = User(username=form.name.data.capitalize(), email=form.Email.data())
             db.session.add(user)
             db.session.commit()
             session['known'] = False
