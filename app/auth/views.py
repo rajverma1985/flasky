@@ -76,5 +76,7 @@ def register():
         db.session.commit()
         flash("Successfully Registered, you can login now!")
         token = user.generate_token()
+        send_email(user.email, 'Confirm Your Account', 'auth/email/confirm', user=user, token=token)
+        flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', register_form=reg_form)
