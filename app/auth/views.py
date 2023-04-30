@@ -1,5 +1,5 @@
-from flask import render_template, redirect, request, url_for, flash, current_user
-from flask_login import login_user, login_required, logout_user
+from flask import render_template, redirect, request, url_for, flash
+from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
 from ..email import send_email
 from ..models import User, db
@@ -8,7 +8,7 @@ from .forms import LoginForm, RegisterForm
 
 @auth.before_app_request
 def before_request():
-    if current_user.authenticated \
+    if current_user.is_authenticated \
             and not current_user.confirmed \
             and request.blueprint != 'auth' \
             and request.endpoint != 'static':
@@ -17,12 +17,13 @@ def before_request():
 
 @auth.route('/unconfirmed')
 def not_confirmed():
-    if current_user.confirmed or current_user.anonymous:
+    if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
-    return render_template('auth/confirm_email.html')
+    return render_template('auth/unconfirmed.html')
 
 
-@auth.confirm('/confirm/<token>')
+@auth.route('/confirm/<token>')
+@login_required
 def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
@@ -45,7 +46,7 @@ def resend_confirmation():
 def login():
     loginform = LoginForm()
     if loginform.validate_on_submit():
-        user = User.query.filter_by(email=loginform.email.data).first()
+        user = User.query.filter_by(email=loginform.email.data.lower()).first()
         if user is not None and user.verify_password(loginform.password.data):
             login_user(user, loginform.remember_me.data)
             new = request.args.get('new')
@@ -68,11 +69,12 @@ def logout():
 def register():
     reg_form = RegisterForm()
     if reg_form.validate_on_submit():
-        user = User(email=reg_form.email.data,
+        user = User(email=reg_form.email.data.lower(),
                     username=reg_form.username.data,
                     password=reg_form.password.data)
         db.session.add(user)
         db.session.commit()
         flash("Successfully Registered, you can login now!")
+        token = user.generate_token()
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', register_form=reg_form)
