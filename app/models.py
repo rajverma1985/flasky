@@ -32,16 +32,21 @@ class User(UserMixin, db.Model):
     # this is the foreign key colum for users table which refers to roles tables id column
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    confirmed = db.Column(db.Boolean, default=False)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    def generate_token(self):
+    def __init__(self, email, username, confirmed=False):
+        self.email = email
+        self.username = username
+        self.confirmed = confirmed
+
+    def generate_token(self, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'])
-        return s.dumps({"confirm": self.id}, salt="2sdaiu23", )
+        return s.dumps({"confirm": self.id}, salt="test_salt")
 
     def confirm_token(self, token, expiration=3600):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = token.loads(s, salt="2sdaiu23", max_age=expiration)
+            data = s.loads(tokens, salt="test_salt", max_age=expiration)
         except:
             return False
         if data.get("confirm") != self.id:

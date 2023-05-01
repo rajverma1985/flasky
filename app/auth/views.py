@@ -12,11 +12,11 @@ def before_request():
             and not current_user.confirmed \
             and request.blueprint != 'auth' \
             and request.endpoint != 'static':
-        return redirect(url_for('auth.not_confirmed'))
+        return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
-def not_confirmed():
+def unconfirmed():
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
@@ -35,11 +35,12 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
-@auth.route('/resend_confirmation')
+@auth.route('/confirm')
 @login_required
 def resend_confirmation():
     token = current_user.generate_token()
-    send_email()
+    send_email(current_user.email, 'Confirm Your Account', 'auth/email/confirm', user=current_user, token=token)
+    return redirect(url_for('main.index'))
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -76,5 +77,7 @@ def register():
         db.session.commit()
         flash("Successfully Registered, you can login now!")
         token = user.generate_token()
+        send_email(user.email, 'Confirm Your Account', 'auth/email/confirm', user=user, token=token)
+        flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', register_form=reg_form)
