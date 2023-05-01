@@ -27,7 +27,7 @@ def unconfirmed():
 def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
-    if current_user.confirm(token):
+    if current_user.confirm_token(token):
         db.session.commit()  # This sends a commit for confirmed column to the database as per the user model
         flash("Thanks for confirming you email")
     else:
