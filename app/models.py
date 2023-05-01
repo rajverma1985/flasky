@@ -34,19 +34,20 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, email, username, confirmed=False):
+    def __init__(self, email, username, password, confirmed=False):
         self.email = email
         self.username = username
         self.confirmed = confirmed
+        self.password = password
 
-    def generate_token(self, expiration=3600):
+    def generate_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
         return s.dumps({"confirm": self.id}, salt="test_salt")
 
-    def confirm_token(self, token, expiration=3600):
+    def confirm_token(self, token, expiration=10):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data = s.loads(tokens, salt="test_salt", max_age=expiration)
+            data = s.loads(token, salt="test_salt", max_age=expiration)
         except:
             return False
         if data.get("confirm") != self.id:

@@ -4,6 +4,16 @@
 
 {% block navbar %}
 <div class="navbar navbar-fixed-top">
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
   <ul class="nav navbar-nav navbar-right">
     {% if current_user.is_authenticated %}
     <li>
