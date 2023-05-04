@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from . import auth
 from ..email import send_email
 from ..models import User, db
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ChangePassword
 
 
 @auth.before_app_request
@@ -81,3 +81,19 @@ def register():
         flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', register_form=reg_form)
+
+
+@auth.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_passwords():
+    form = ChangePassword()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.old_password.data):
+            current_user.password = form.new_password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash("Your password is updated")
+            return redirect(url_for('main.index'))
+        else:
+            flash("Invalid Password")
+    return render_template('auth/change_password')
