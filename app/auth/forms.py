@@ -24,10 +24,18 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register Now')
 
     def email_validation(self, email_field):
-        if User.query.filter_by(email=email_field.data).first():
+        if User.query.filter_by(email=email_field.data.lower()).first():
             raise ValidationError("Email is already registered!")
 
     def user_validation(self, user_field):
-        if User.query.filter_by(email=user_field.data).first():
+        if User.query.filter_by(email=user_field.data.lower()).first():
             raise ValidationError("Username is already in user")
 
+
+class ChangePassword(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    new_password = PasswordField('Password',
+                             validators=[DataRequired(), EqualTo('new_password2', message='Passwords must match'),
+                                         Length(8, 30)])
+    new_password2 = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Change Password')

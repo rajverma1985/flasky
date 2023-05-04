@@ -48,8 +48,6 @@ class User(UserMixin, db.Model):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token.encode('utf-8'), salt="test_salt", max_age=expiration)
-            print(token.encode('utf-8'))
-            print(token)
         except:
             return False
         if data.get("confirm") != self.id:
