@@ -96,4 +96,4 @@ def change_passwords():
             return redirect(url_for('main.index'))
         else:
             flash("Invalid Password")
-    return render_template('auth/change_password')
+    return render_template('auth/change_password', form=form)
