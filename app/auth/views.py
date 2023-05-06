@@ -54,7 +54,7 @@ def login():
             if new is None or not new.startswith('/'):
                 new = url_for('main.index')
             return redirect(new)
-        flash("Invalid username or password")
+        flash("The username or password is Invalid")
     return render_template('auth/login.html', loginform=loginform)
 
 
