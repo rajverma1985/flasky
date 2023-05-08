@@ -16,11 +16,41 @@ class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
+    default = db.Column(db.Boolean, default=False, index=True)
+    permissions = db.Column(db.Integer)
     # user refers to the instance of the class Role
     users = db.relationship('User', backref='role', lazy='dynamic')
 
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
+
+    def add_permission(self, value):
+        if not self.has_permission(value):
+            self.permissions += value
+
+    def remove_permission(self, value):
+        if not self.has_permission(value):
+            self.permissions -= value
+
+    def reset_permission(self):
+        self.permissions = 0
+
+    def has_permission(self, value):
+        return self.permissions & value == value
+
     def __repr__(self):
         return "<Role %r>" % self.name
+
+
+class Permission:
+    # define constants
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
 
 
 class User(UserMixin, db.Model):
@@ -34,11 +64,10 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, email, username, password, confirmed=False):
+    def __init__(self, email, username, confirmed=False):
         self.email = email
         self.username = username
         self.confirmed = confirmed
-        self.password = password
 
     def generate_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
