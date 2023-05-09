@@ -43,6 +43,20 @@ class Role(db.Model):
     def has_permission(self, value):
         return self.permissions & value == value
 
+    @staticmethod
+    def insert_roles():
+        roles = {
+            'User': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
+            'Moderator': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE],
+            'Admin': [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE, Permission.MODERATE, Permission.ADMIN]
+        }
+        default_role = 'User'
+        for role in roles:
+            get_role = Role.query.filter_by(name=role).first()
+            if get_role is None:
+                get_role = Role(name=role)
+                get_role.reset_permission()
+
     def __repr__(self):
         return "<Role %r>" % self.name
 
