@@ -55,7 +55,12 @@ class Role(db.Model):
             get_role = Role.query.filter_by(name=role).first()
             if get_role is None:
                 get_role = Role(name=role)
-                get_role.reset_permission()
+            get_role.reset_permission()
+            for perm in roles[role]:
+                get_role.add_permission(perm)
+            get_role.default = (get_role.name == default_role)
+            db.session.add(get_role)
+        db.session.commit()
 
     def __repr__(self):
         return "<Role %r>" % self.name
@@ -72,10 +77,11 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, email, username, confirmed=False):
-        self.email = email
-        self.username = username
-        self.confirmed = confirmed
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.role_id is None:
+
+
 
     def generate_token(self):
         s = Serializer(current_app.config['SECRET_KEY'])
